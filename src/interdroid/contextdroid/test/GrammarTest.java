@@ -16,7 +16,6 @@ import interdroid.contextdroid.contextexpressions.LogicOperator;
 import interdroid.contextdroid.contextexpressions.MathExpression;
 import interdroid.contextdroid.contextexpressions.MathOperator;
 import interdroid.contextdroid.contextexpressions.ParseableEnum;
-import interdroid.contextdroid.contextexpressions.Strategy;
 import interdroid.contextdroid.contextexpressions.Comparator;
 import interdroid.contextdroid.contextexpressions.HistoryReductionMode;
 import interdroid.contextdroid.contextexpressions.TimestampedValue;
@@ -102,10 +101,6 @@ public class GrammarTest extends AndroidTestCase {
 			}
 		}
 		return ret;
-	}
-
-	public void testStrategy() {
-		helpTestParseableEnum(Strategy.values(), "strategy", "strategy");
 	}
 
 	public void testComparator() {
@@ -208,8 +203,16 @@ public class GrammarTest extends AndroidTestCase {
 				{"sensor2", "path.two", "config=value", null, null},
 				{"sensor3", "three", null,
 					HistoryReductionMode.MAX.toParseString(), "100"},
+				{"sensor3", "three", null,
+					null, "100"},
+				{"sensor3", "three", null,
+					HistoryReductionMode.MAX.toParseString(), null},
 				{"sensor3", "value.path.four", "config=value2",
-					HistoryReductionMode.MIN.toParseString(), "1000"}
+					HistoryReductionMode.MIN.toParseString(), "1000"},
+				{"sensor3", "value.path.four", "config=value2",
+						null, "1000"},
+				{"sensor3", "value.path.four", "config=value2",
+						HistoryReductionMode.MIN.toParseString(), null}
 		};
 		for (int i = 0; i < values.length; i++) {
 			String[] value = values[i];
@@ -230,7 +233,15 @@ public class GrammarTest extends AndroidTestCase {
 			if (value[3] != null) {
 				assertEquals(value[3],
 						ctv.getHistoryReductionMode().toParseString());
+			} else {
+				assertEquals(HistoryReductionMode.DEFAULT_MODE,
+						ctv.getHistoryReductionMode());
+			}
+			if (value[4] != null) {
 				assertEquals(value[4], String.valueOf(ctv.getHistoryLength()));
+			} else {
+				assertEquals(ContextTypedValue.DEFAULT_HISTORY_LENGTH,
+						ctv.getHistoryLength());
 			}
 		}
 	}
@@ -244,11 +255,17 @@ public class GrammarTest extends AndroidTestCase {
 			ret.append(value[2]);
 		}
 		ret.append(' ');
-		if (value[3] != null) {
+		if (value[3] != null || value[4] != null) {
 			ret.append('{');
-			ret.append(value[3]);
-			ret.append(',');
-			ret.append(value[4]);
+			if (value[3] != null) {
+				ret.append(value[3]);
+				if (value[4] != null) {
+					ret.append(',');
+				}
+			}
+			if (value[4] != null) {
+				ret.append(value[4]);
+			}
 			ret.append('}');
 		}
 		return ret.toString();
@@ -305,13 +322,12 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testComparativeExpression() throws RecognitionException {
-		String expression = "2 all > 3";
+		String expression = "2 > 3";
 		Expression e = parseExpression(expression);
 		assertNotNull(e);
 		assertTrue(e instanceof ComparisonExpression);
 		ComparisonExpression ce = (ComparisonExpression) e;
 		assertEquals(Comparator.GREATER_THAN, ce.getComparator());
-		assertEquals(Strategy.ALL, ce.getStrategy());
 	}
 
 	public void testMultiplicativeExpression() throws RecognitionException {
@@ -372,7 +388,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testComplexUnaryExpression() throws RecognitionException {
-		String test = "! 2 all > 3 && 3 all > 4";
+		String test = "! 2 > 3 && 3 > 4";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
 		assertTrue(e instanceof LogicExpression);
@@ -389,7 +405,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testParentheticalUnaryExpression() throws RecognitionException {
-		String test = "! (2 all > 3 && 3 all > 4)";
+		String test = "! (2 > 3 && 3 > 4)";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
 		assertTrue(e instanceof LogicExpression);
