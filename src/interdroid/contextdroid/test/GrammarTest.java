@@ -197,6 +197,26 @@ public class GrammarTest extends AndroidTestCase {
 		}
 	}
 
+	public void testTimeValue() throws RecognitionException {
+		String[] times = {"1h", "5m", "10s", "1000", "1h 5m",
+			"1h 10s", "100ms", "1h 5s", "1h 5m 10s 100ms", "5m 10s",
+			"10s 100ms"
+		};
+		long hour = 60 * 60 * 1000;
+		long minute = 60 * 1000;
+		long second = 1000;
+
+		long[] values = {hour, 5 * minute, 10 * second, second, hour + (5 * minute),
+				hour + (10 * second), 100, hour + (5 * second), hour + (5 * minute) + (10 * second) + 100,
+				(5 * minute) + (10 * second), (10 * second) + 100};
+		int i = 0;
+		for (String time : times) {
+			ContextExpressionParser parser = buildParser(time);
+			Log.d(TAG, "Testing: " + time);
+			assertEquals((Long) values[i++], (Long) parser.time_value());
+		}
+	}
+
 	public void testContextTypedValue() throws RecognitionException {
 		String[][] values = {
 				{"sensor1", "value.path", null, null, null},
@@ -377,7 +397,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testUnaryExpression() throws RecognitionException {
-		String test = "! 2 all > 3";
+		String test = "! 2 > 3";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
 		assertTrue(e instanceof LogicExpression);
