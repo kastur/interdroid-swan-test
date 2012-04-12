@@ -1,25 +1,25 @@
-package interdroid.contextdroid.test;
+package interdroid.swan.test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import interdroid.contextdroid.ContextDroidException;
-import interdroid.contextdroid.contextexpressions.ComparisonExpression;
-import interdroid.contextdroid.contextexpressions.ConstantTypedValue;
-import interdroid.contextdroid.contextexpressions.ContextExpressionLexer;
-import interdroid.contextdroid.contextexpressions.ContextExpressionParser;
-import interdroid.contextdroid.contextexpressions.ContextTypedValue;
-import interdroid.contextdroid.contextexpressions.Expression;
-import interdroid.contextdroid.contextexpressions.LogicExpression;
-import interdroid.contextdroid.contextexpressions.LogicOperator;
-import interdroid.contextdroid.contextexpressions.MathExpression;
-import interdroid.contextdroid.contextexpressions.MathOperator;
-import interdroid.contextdroid.contextexpressions.ParseableEnum;
-import interdroid.contextdroid.contextexpressions.Comparator;
-import interdroid.contextdroid.contextexpressions.HistoryReductionMode;
-import interdroid.contextdroid.contextexpressions.TimestampedValue;
-import interdroid.contextdroid.contextexpressions.TypedValueExpression;
+import interdroid.swan.contextexpressions.ContextExpressionLexer;
+import interdroid.swan.contextexpressions.ContextExpressionParser;
+import interdroid.swan.SwanException;
+import interdroid.swan.contextexpressions.Comparator;
+import interdroid.swan.contextexpressions.ComparisonExpression;
+import interdroid.swan.contextexpressions.ConstantTypedValue;
+import interdroid.swan.contextexpressions.ContextTypedValue;
+import interdroid.swan.contextexpressions.Expression;
+import interdroid.swan.contextexpressions.HistoryReductionMode;
+import interdroid.swan.contextexpressions.LogicExpression;
+import interdroid.swan.contextexpressions.LogicOperator;
+import interdroid.swan.contextexpressions.MathExpression;
+import interdroid.swan.contextexpressions.MathOperator;
+import interdroid.swan.contextexpressions.ParseableEnum;
+import interdroid.swan.contextexpressions.TimestampedValue;
+import interdroid.swan.contextexpressions.TypedValueExpression;
 
 
 import org.antlr.runtime.ANTLRStringStream;
@@ -450,7 +450,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testIntExpression()
-			throws RecognitionException, ContextDroidException {
+			throws RecognitionException, SwanException {
 		String test = "10";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
@@ -462,7 +462,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testFloatExpression()
-			throws RecognitionException, ContextDroidException {
+			throws RecognitionException, SwanException {
 		String test = "10.5";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
@@ -473,7 +473,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testFloatWithExponent()
-			throws RecognitionException, ContextDroidException {
+			throws RecognitionException, SwanException {
 		String test = "10.5e3";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
@@ -486,7 +486,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testStringExpression()
-			throws RecognitionException, ContextDroidException {
+			throws RecognitionException, SwanException {
 		String test = "'10.5'";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
@@ -497,7 +497,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testEscapedExpression()
-			throws RecognitionException, ContextDroidException {
+			throws RecognitionException, SwanException {
 		String test = "'\\n'";
 		assertEquals(4, test.length());
 		Expression e = parseExpression(test);
@@ -509,7 +509,7 @@ public class GrammarTest extends AndroidTestCase {
 	}
 
 	public void testUnicodeEscapedExpression()
-			throws RecognitionException, ContextDroidException {
+			throws RecognitionException, SwanException {
 		String test = "'\\u001a'";
 		Expression e = parseExpression(test);
 		assertNotNull(e);
