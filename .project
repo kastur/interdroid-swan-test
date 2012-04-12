@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ContextDroidTest</name>
+	<name>swan-test</name>
 	<comment></comment>
 	<projects>
-		<project>ContextDroid</project>
+		<project>swan</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
